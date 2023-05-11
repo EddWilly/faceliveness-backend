@@ -19,6 +19,8 @@ app.get("/api/getFaceLivenessResults", async (req, res) => {
     res.json(result)
 })
 
-app.listen(3000, () => {
-    console.log("Listen on the port 3000...");
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+    console.log("Listen on the port "+port);
 });
