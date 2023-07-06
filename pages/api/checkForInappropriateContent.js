@@ -31,9 +31,6 @@ const rekognition = new Rekognition({
   
     if (moderationLabels.ModerationLabels.length > 0) {
       if(moderationLabels.ModerationLabels[1].Name === "Explicit Nudity"){
-        console.log(`Nudity content detected in image: ${key}`);
-        console.log("Confidence: " + moderationLabels.ModerationLabels[1].Confidence)
-        console.log(`Deleting image...`);
         // const command = new DeleteObjectCommand(params);
         // const response = await s3Client.send(command);
         // return response
@@ -46,7 +43,19 @@ const rekognition = new Rekognition({
           }
         }
         return response
+      } else {
+        const response = {
+          inappropriate: false,
+        }
+
+        return response
       }
+    } else {
+      const response = {
+        inappropriate: false,
+      }
+
+      return response
     }
   } catch (err) {
     console.log(err)
