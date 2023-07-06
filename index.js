@@ -20,6 +20,13 @@ app.get("/api/getFaceLivenessResults", async (req, res) => {
     res.json(result)
 })
 
+app.get("/api/detectInappropriateImage", async (req, res) => {
+    //const result = await detectInappropriateContent(req)
+    
+    const bucketName = "playdate.prod";
+    const result = await batchObjects(bucketName)
+    console.log(result)
+})
 
 app.get("/api/checkInappropriateContent", async (req, res) => {
     //const result = await detectInappropriateContent(req)
