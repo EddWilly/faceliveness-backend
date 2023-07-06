@@ -5,7 +5,6 @@ app.use(cors());
 app.use(express.json())
 
 import { createSessionHandler } from './pages/api/createSession.js'
-import detectInappropriateContent, { batchObjects, AWS_ModerateLabels } from './pages/detectInappropriateContent.js'
 import { checkForInappropriateContent } from './pages/api/checkForInappropriateContent.js';
 import { getSessionResultHandler } from './pages/api/getSessionResult.js'
 
@@ -18,14 +17,6 @@ app.get("/api/getFaceLivenessResults", async (req, res) => {
     const result = await getSessionResultHandler(req.query.sessionId);
     // console.log(result)
     res.json(result)
-})
-
-app.get("/api/detectInappropriateImage", async (req, res) => {
-    //const result = await detectInappropriateContent(req)
-    
-    const bucketName = "playdate.prod";
-    const result = await batchObjects(bucketName)
-    console.log(result)
 })
 
 app.get("/api/checkInappropriateContent", async (req, res) => {
