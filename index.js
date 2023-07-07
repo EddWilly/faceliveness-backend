@@ -23,7 +23,7 @@ app.get("/api/checkInappropriateContent", async (req, res) => {
     //const result = await detectInappropriateContent(req)
     const objectKey = req.query.objectKey
     const result = await checkForInappropriateContent(objectKey)
-    console.log(result)
+    res.json(result)
 })
 
 const port = process.env.PORT || 3000;
