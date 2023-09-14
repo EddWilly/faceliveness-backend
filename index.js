@@ -10,7 +10,6 @@ import { getSessionResultHandler } from './pages/api/getSessionResult.js'
 
 app.get("/api/createSession", async (request, response) => {
     const sessionId = await createSessionHandler(request, response)
-    // response.json({ sessionId })
 })
 
 app.get("/api/getFaceLivenessResults", async (req, res) => {
