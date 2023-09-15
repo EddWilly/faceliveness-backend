@@ -30,12 +30,11 @@ export const checkForInappropriateContent = async (key) => {
 
     MinConfidence: 60,
   };
-  console.log({ key });
   try {
     const moderationLabels = await rekognition.detectModerationLabels(params);
 
     if (moderationLabels.ModerationLabels.length > 0) {
-      console.log({ moderationLabels: moderationLabels.ModerationLabels });
+    
       if (moderationLabels.ModerationLabels[1].Name === "Explicit Nudity") {
         // const command = new DeleteObjectCommand(params);
         // const response = await s3Client.send(command);
