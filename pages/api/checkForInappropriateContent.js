@@ -2,22 +2,22 @@ import { withSSRContext } from "aws-amplify";
 import { Rekognition } from "@aws-sdk/client-rekognition";
 import aws from "aws-sdk";
 
-const { Credentials } = withSSRContext({});
-const credentials = await Credentials.get();
-//Put this inside the function
-const rekognition = new Rekognition({
-  region: "eu-west-2",
-  credentials,
-  endpoint: "https://rekognition.eu-west-2.amazonaws.com",
-});
-
-const bucket = new aws.S3({
-  region: "eu-west-2",
-  accessKeyId: process.env.AWS_SECRET_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-});
-
 export const checkForInappropriateContent = async (key) => {
+  const { Credentials } = withSSRContext({});
+  const credentials = await Credentials.get();
+  //Put this inside the function
+  const rekognition = new Rekognition({
+    region: "eu-west-2",
+    credentials,
+    endpoint: "https://rekognition.eu-west-2.amazonaws.com",
+  });
+
+  const bucket = new aws.S3({
+    region: "eu-west-2",
+    accessKeyId: process.env.AWS_SECRET_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  });
+
   const bucketName = "playdate.prod";
   const params = {
     Image: {
@@ -31,7 +31,7 @@ export const checkForInappropriateContent = async (key) => {
   };
   try {
     const moderationLabels = await rekognition.detectModerationLabels(params);
-
+    console.log(moderationLabels);
     if (
       moderationLabels.ModerationLabels.length > 0 &&
       moderationLabels.ModerationLabels[1].Name === "Explicit Nudity"
