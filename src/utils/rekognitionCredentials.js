@@ -4,7 +4,6 @@ import { Rekognition } from "@aws-sdk/client-rekognition";
 export async function getRekognitionClient() {
   try {
     const { Credentials } = withSSRContext({});
-    console.log({ Credentials });
     const credentials = await Credentials.get();
     const rekognitionClient = new Rekognition({
       region: "us-east-1",
