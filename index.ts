@@ -88,8 +88,7 @@ async function main() {
     // fastify.post('/add-image', addImage)
     // fastify.put('/change-order-image/:imageId', changeOrderImage)
     console.log("Server running at port " + port)
-    await fastify.ready()
-    fastify.swagger()
+
     await fastify.listen({
       port: parseInt(port ?? '') || 8000,
     })
