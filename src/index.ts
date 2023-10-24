@@ -11,77 +11,73 @@ const port = process.env.PORT;
 
 console.log("env: ", process.env)
 
-async function main() {
-  const fastify = Fastify({
-    logger: true,
-  })
 
-  try {
-    fastify.register(cors)
+const fastify = Fastify({
+  logger: true,
+})
 
 
-    fastify.register(multer.contentParser)
-    fastify.register(router)
-    fastify.register(swagger, {
-      swagger: {
-        info: {
-          title: 'Test swagger',
-          description: 'Testing the Fastify swagger API',
-          version: '0.1.0',
-        },
-        externalDocs: {
-          url: 'https://swagger.io',
-          description: 'Find more info here',
-        },
-        host: 'localhost',
-        schemes: ['http'],
-        consumes: ['application/json'],
-        produces: ['application/json'],
-        tags: [
-          { name: 'user', description: 'User related end-points' },
-          { name: 'code', description: 'Code related end-points' },
-        ],
-        definitions: {
-          User: {
-            type: 'object',
-            required: ['id', 'email'],
-            properties: {
-              id: { type: 'string', format: 'uuid' },
-              firstName: { type: 'string' },
-              lastName: { type: 'string' },
-              email: { type: 'string', format: 'email' },
-            },
-          },
-        },
-        securityDefinitions: {
-          apiKey: {
-            type: 'apiKey',
-            name: 'apiKey',
-            in: 'header',
-          },
+fastify.register(cors)
+
+
+fastify.register(multer.contentParser)
+fastify.register(router)
+fastify.register(swagger, {
+  swagger: {
+    info: {
+      title: 'Test swagger',
+      description: 'Testing the Fastify swagger API',
+      version: '0.1.0',
+    },
+    externalDocs: {
+      url: 'https://swagger.io',
+      description: 'Find more info here',
+    },
+    host: 'localhost',
+    schemes: ['http'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    tags: [
+      { name: 'user', description: 'User related end-points' },
+      { name: 'code', description: 'Code related end-points' },
+    ],
+    definitions: {
+      User: {
+        type: 'object',
+        required: ['id', 'email'],
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          firstName: { type: 'string' },
+          lastName: { type: 'string' },
+          email: { type: 'string', format: 'email' },
         },
       },
-    })
+    },
+    securityDefinitions: {
+      apiKey: {
+        type: 'apiKey',
+        name: 'apiKey',
+        in: 'header',
+      },
+    },
+  },
+})
 
-    // fastify.get('/heath', (req, reply) => {
-    //   return {
-    //     ok: true,
-    //   }
-    // })
+// fastify.get('/heath', (req, reply) => {
+//   return {
+//     ok: true,
+//   }
+// })
 
-    // fastify.post('/add-image', addImage)
-    // fastify.put('/change-order-image/:imageId', changeOrderImage)
-    console.log("🚀Server running at port " + port)
+// fastify.post('/add-image', addImage)
+// fastify.put('/change-order-image/:imageId', changeOrderImage)
+console.log("🚀Server running at port " + port)
 
-    await fastify.listen({
-      port: +port!,
-    })
-  } catch (err) {
-    fastify.log.error(err)
-  }
-}
+fastify.listen({
+  port: +port!,
+}).then(res => console.log(res))
 
-main()
+
 
 // const app = express();
 // const port = process.env.PORT || 8000;
