@@ -3,7 +3,7 @@
 import { Rekognition } from '@aws-sdk/client-rekognition'
 import { Amplify, withSSRContext } from 'aws-amplify'
 import { FastifyRequest } from 'fastify'
-import awsExports from '../aws-exports.js'
+import awsExports from '../aws-exports'
 
 Amplify.configure({ ...awsExports, ssr: true })
 
