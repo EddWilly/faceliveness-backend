@@ -2,7 +2,6 @@ import 'dotenv/config'
 /* eslint-disable @typescript-eslint/no-var-requires */
 // import cors from "cors";
 import cors from '@fastify/cors'
-import fastifyEnv from '@fastify/env'
 import swagger from '@fastify/swagger'
 import Fastify from 'fastify'
 import multer from 'fastify-multer'
@@ -16,25 +15,7 @@ async function main() {
 
   try {
     fastify.register(cors)
-    fastify.register(fastifyEnv, {
-      schema: {
-        type: 'object',
-        required: [
-          'AWS_SECRET_ACCESS_KEY',
-          'AWS_SECRET_ACCESS_KEY_ID',
-          'OPENAI_API_KEY',
-          'DATABASE_URL',
-        ],
-        properties: {
-          AWS_SECRET_ACCESS_KEY: { type: 'string' },
-          AWS_SECRET_ACCESS_KEY_ID: { type: 'string' },
-          OPENAI_API_KEY: { type: 'string' },
-          DATABASE_URL: { type: 'string' },
-        },
-      },
-      data: process.env,
-      dotenv: true,
-    })
+
 
     fastify.register(multer.contentParser)
     fastify.register(router)
