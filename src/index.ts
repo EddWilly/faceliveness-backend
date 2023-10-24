@@ -7,7 +7,7 @@ import Fastify from 'fastify'
 import multer from 'fastify-multer'
 import { router } from './routes/router'
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 async function main() {
   const fastify = Fastify({
@@ -72,7 +72,7 @@ async function main() {
     console.log("Server running at port " + port)
 
     await fastify.listen({
-      port: +port,
+      port: +port!,
     })
   } catch (err) {
     fastify.log.error(err)
