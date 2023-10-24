@@ -7,11 +7,12 @@ import Fastify from 'fastify'
 import multer from 'fastify-multer'
 import { router } from './routes/router'
 
+const port = process.env.PORT || 3000;
+
 async function main() {
   const fastify = Fastify({
     logger: true,
   })
-  const port = process.env.PORT || 3000;
 
   try {
     fastify.register(cors)
