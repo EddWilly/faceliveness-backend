@@ -12,6 +12,7 @@ async function main() {
   const fastify = Fastify({
     logger: true,
   })
+  const port = process.env.PORT
 
   try {
     fastify.register(cors)
@@ -89,7 +90,7 @@ async function main() {
     await fastify.ready()
     fastify.swagger()
     await fastify.listen({
-      port: 8000,
+      port: parseInt(port ?? '') || 8000,
     })
   } catch (err) {
     fastify.log.error(err)
