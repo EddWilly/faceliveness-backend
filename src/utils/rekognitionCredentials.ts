@@ -1,5 +1,5 @@
-import { withSSRContext } from "aws-amplify";
 import { Rekognition } from "@aws-sdk/client-rekognition";
+import { withSSRContext } from "aws-amplify";
 
 export async function getRekognitionClient() {
   try {

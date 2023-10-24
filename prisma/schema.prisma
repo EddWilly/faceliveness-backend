@@ -1,0 +1,663 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model account_emailaddress {
+  id                        Int                         @id @default(autoincrement())
+  email                     String                      @unique(map: "email") @db.VarChar(254)
+  verified                  Boolean
+  primary                   Boolean
+  user_id                   BigInt
+  playdate_auth_account     playdate_auth_account       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "account_emailaddress_user_id_2c513194_fk_playdate_")
+  account_emailconfirmation account_emailconfirmation[]
+
+  @@index([user_id], map: "account_emailaddress_user_id_2c513194_fk_playdate_")
+}
+
+model account_emailconfirmation {
+  id                   Int                  @id @default(autoincrement())
+  created              DateTime             @db.DateTime(6)
+  sent                 DateTime?            @db.DateTime(6)
+  key                  String               @unique(map: "key") @db.VarChar(64)
+  email_address_id     Int
+  account_emailaddress account_emailaddress @relation(fields: [email_address_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "account_emailconfirm_email_address_id_5b7f8c58_fk_account_e")
+
+  @@index([email_address_id], map: "account_emailconfirm_email_address_id_5b7f8c58_fk_account_e")
+}
+
+model auth_group {
+  id                           Int                            @id @default(autoincrement())
+  name                         String                         @unique(map: "name") @db.VarChar(150)
+  auth_group_permissions       auth_group_permissions[]
+  playdate_auth_account_groups playdate_auth_account_groups[]
+}
+
+model auth_group_permissions {
+  id              BigInt          @id @default(autoincrement())
+  group_id        Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+  auth_group      auth_group      @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id")
+
+  @@unique([group_id, permission_id], map: "auth_group_permissions_group_id_permission_id_0cd325b0_uniq")
+  @@index([permission_id], map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+}
+
+model auth_permission {
+  id                                     Int                                      @id @default(autoincrement())
+  name                                   String                                   @db.VarChar(255)
+  content_type_id                        Int
+  codename                               String                                   @db.VarChar(100)
+  auth_group_permissions                 auth_group_permissions[]
+  django_content_type                    django_content_type                      @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_permission_content_type_id_2f476e4b_fk_django_co")
+  playdate_auth_account_user_permissions playdate_auth_account_user_permissions[]
+
+  @@unique([content_type_id, codename], map: "auth_permission_content_type_id_codename_01ab375a_uniq")
+}
+
+model authtoken_token {
+  key                   String                @id @db.VarChar(40)
+  created               DateTime              @db.DateTime(6)
+  user_id               BigInt                @unique(map: "user_id")
+  playdate_auth_account playdate_auth_account @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "authtoken_token_user_id_35299eff_fk_playdate_auth_account_id")
+}
+
+model chat_manager_chatsession {
+  id                                                                                   BigInt                 @id @default(autoincrement())
+  session_id                                                                           String?                @db.VarChar(255)
+  created_at                                                                           DateTime               @db.DateTime(6)
+  is_imported                                                                          Boolean?
+  receiver_id_id                                                                       BigInt
+  sender_id_id                                                                         BigInt
+  playdate_auth_account_chat_manager_chatsession_receiver_id_idToplaydate_auth_account playdate_auth_account  @relation("chat_manager_chatsession_receiver_id_idToplaydate_auth_account", fields: [receiver_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "chat_manager_chatses_receiver_id_id_06e655f8_fk_playdate_")
+  playdate_auth_account_chat_manager_chatsession_sender_id_idToplaydate_auth_account   playdate_auth_account  @relation("chat_manager_chatsession_sender_id_idToplaydate_auth_account", fields: [sender_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "chat_manager_chatses_sender_id_id_dfe1c9eb_fk_playdate_")
+  chat_manager_message                                                                 chat_manager_message[]
+
+  @@index([receiver_id_id], map: "chat_manager_chatses_receiver_id_id_06e655f8_fk_playdate_")
+  @@index([sender_id_id], map: "chat_manager_chatses_sender_id_id_dfe1c9eb_fk_playdate_")
+}
+
+model chat_manager_message {
+  id                                                                               BigInt                   @id @default(autoincrement())
+  msg_type                                                                         Int?
+  content                                                                          String                   @db.LongText
+  thumb_img                                                                        String?                  @db.VarChar(500)
+  duration                                                                         Int?
+  is_read                                                                          Boolean
+  is_sender_deleted                                                                Boolean
+  is_receiver_deleted                                                              Boolean
+  is_deleted                                                                       Boolean
+  created_at                                                                       DateTime?                @db.DateTime(6)
+  sender_date                                                                      DateTime?                @db.DateTime(6)
+  receiver_date                                                                    DateTime?                @db.DateTime(6)
+  chat_session_id_id                                                               BigInt
+  receiver_id_id                                                                   BigInt
+  sender_id_id                                                                     BigInt
+  chat_manager_chatsession                                                         chat_manager_chatsession @relation(fields: [chat_session_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "chat_manager_message_chat_session_id_id_5402819f_fk_chat_mana")
+  playdate_auth_account_chat_manager_message_receiver_id_idToplaydate_auth_account playdate_auth_account    @relation("chat_manager_message_receiver_id_idToplaydate_auth_account", fields: [receiver_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "chat_manager_message_receiver_id_id_ef6ae596_fk_playdate_")
+  playdate_auth_account_chat_manager_message_sender_id_idToplaydate_auth_account   playdate_auth_account    @relation("chat_manager_message_sender_id_idToplaydate_auth_account", fields: [sender_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "chat_manager_message_sender_id_id_7de1a51c_fk_playdate_")
+
+  @@index([chat_session_id_id], map: "chat_manager_message_chat_session_id_id_5402819f_fk_chat_mana")
+  @@index([receiver_id_id], map: "chat_manager_message_receiver_id_id_ef6ae596_fk_playdate_")
+  @@index([sender_id_id], map: "chat_manager_message_sender_id_id_7de1a51c_fk_playdate_")
+}
+
+model content_manager_answer {
+  id                       BigInt                   @id @default(autoincrement())
+  body                     String                   @db.LongText
+  created_at               DateTime                 @db.DateTime(6)
+  updated_at               DateTime                 @db.DateTime(6)
+  profile_id               BigInt
+  question_id              BigInt
+  playdate_auth_profile    playdate_auth_profile    @relation(fields: [profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "content_manager_answ_profile_id_da1a01a2_fk_playdate_")
+  content_manager_question content_manager_question @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "content_manager_answ_question_id_a25651b5_fk_content_m")
+
+  @@index([profile_id], map: "content_manager_answ_profile_id_da1a01a2_fk_playdate_")
+  @@index([question_id], map: "content_manager_answ_question_id_a25651b5_fk_content_m")
+}
+
+model content_manager_goal {
+  id                                        BigInt                                      @id @default(autoincrement())
+  text                                      String                                      @db.VarChar(255)
+  main                                      Boolean
+  created_at                                DateTime                                    @db.DateTime(6)
+  updated_at                                DateTime                                    @db.DateTime(6)
+  playdate_auth_questioninfo_relation_goals playdate_auth_questioninfo_relation_goals[]
+}
+
+model content_manager_idea {
+  id                        BigInt                      @id @default(autoincrement())
+  title                     String                      @db.VarChar(255)
+  description               String                      @db.LongText
+  type                      String                      @db.VarChar(255)
+  created_at                DateTime                    @db.DateTime(6)
+  updated_at                DateTime                    @db.DateTime(6)
+  img                       String?                     @db.VarChar(500)
+  content_manager_ideaimage content_manager_ideaimage[]
+  playdate_auth_savedidea   playdate_auth_savedidea[]
+}
+
+model content_manager_ideaimage {
+  id                   BigInt               @id @default(autoincrement())
+  link                 String               @db.VarChar(500)
+  created_at           DateTime             @db.DateTime(6)
+  updated_at           DateTime             @db.DateTime(6)
+  idea_id              BigInt
+  content_manager_idea content_manager_idea @relation(fields: [idea_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "content_manager_idea_idea_id_3443fb89_fk_content_m")
+
+  @@index([idea_id], map: "content_manager_idea_idea_id_3443fb89_fk_content_m")
+}
+
+model content_manager_interest {
+  id                    BigInt                 @id @default(autoincrement())
+  text                  String                 @db.VarChar(255)
+  main                  Boolean
+  created_at            DateTime               @db.DateTime(6)
+  updated_at            DateTime               @db.DateTime(6)
+  created_by_id         BigInt?
+  playdate_auth_account playdate_auth_account? @relation(fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "content_manager_inte_created_by_id_95398305_fk_playdate_")
+
+  @@index([created_by_id], map: "content_manager_inte_created_by_id_95398305_fk_playdate_")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model content_manager_like {
+  id                    BigInt                @id @default(autoincrement())
+  object_id             Int                   @db.UnsignedInt
+  account_id_id         BigInt
+  content_type_id       Int
+  playdate_auth_account playdate_auth_account @relation(fields: [account_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "content_manager_like_account_id_id_681b5693_fk_playdate_")
+  django_content_type   django_content_type   @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "content_manager_like_content_type_id_a6dc1e62_fk_django_co")
+
+  @@index([content_type_id, object_id], map: "content_man_content_2944dc_idx")
+  @@index([account_id_id], map: "content_manager_like_account_id_id_681b5693_fk_playdate_")
+}
+
+model content_manager_question {
+  id                     BigInt                   @id @default(autoincrement())
+  body                   String                   @db.LongText
+  is_active              Boolean
+  created_at             DateTime                 @db.DateTime(6)
+  updated_at             DateTime                 @db.DateTime(6)
+  content_manager_answer content_manager_answer[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model django_admin_log {
+  id                    Int                   @id @default(autoincrement())
+  action_time           DateTime              @db.DateTime(6)
+  object_id             String?               @db.LongText
+  object_repr           String                @db.VarChar(200)
+  action_flag           Int                   @db.UnsignedSmallInt
+  change_message        String                @db.LongText
+  content_type_id       Int?
+  user_id               BigInt
+  django_content_type   django_content_type?  @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+  playdate_auth_account playdate_auth_account @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_user_id_c564eba6_fk_playdate_auth_account_id")
+
+  @@index([content_type_id], map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+  @@index([user_id], map: "django_admin_log_user_id_c564eba6_fk_playdate_auth_account_id")
+}
+
+model django_content_type {
+  id                   Int                    @id @default(autoincrement())
+  app_label            String                 @db.VarChar(100)
+  model                String                 @db.VarChar(100)
+  auth_permission      auth_permission[]
+  content_manager_like content_manager_like[]
+  django_admin_log     django_admin_log[]
+
+  @@unique([app_label, model], map: "django_content_type_app_label_model_76bd3d3b_uniq")
+}
+
+model django_migrations {
+  id      BigInt   @id @default(autoincrement())
+  app     String   @db.VarChar(255)
+  name    String   @db.VarChar(255)
+  applied DateTime @db.DateTime(6)
+}
+
+model django_session {
+  session_key  String   @id @db.VarChar(40)
+  session_data String   @db.LongText
+  expire_date  DateTime @db.DateTime(6)
+
+  @@index([expire_date], map: "django_session_expire_date_a5c62663")
+}
+
+model fcm_django_fcmdevice {
+  id                    Int                    @id @default(autoincrement())
+  name                  String?                @db.VarChar(255)
+  active                Boolean
+  date_created          DateTime?              @db.DateTime(6)
+  device_id             String?                @db.VarChar(255)
+  registration_id       String                 @db.LongText
+  type                  String                 @db.VarChar(10)
+  user_id               BigInt?
+  playdate_auth_account playdate_auth_account? @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fcm_django_fcmdevice_user_id_6cdfc0a2_fk_playdate_")
+
+  @@index([device_id], map: "fcm_django_fcmdevice_device_id_a9406c36")
+  @@index([user_id], map: "fcm_django_fcmdevice_user_id_6cdfc0a2_fk_playdate_")
+}
+
+model friendship_manager_blocklist {
+  relation_id                 BigInt                      @id
+  friendship_manager_relation friendship_manager_relation @relation(fields: [relation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_b_relation_id_c2fb1b1e_fk_friendshi")
+}
+
+model friendship_manager_chat {
+  id                                                                            BigInt                @id @default(autoincrement())
+  guid                                                                          String                @unique(map: "guid") @db.Char(32)
+  created_at                                                                    DateTime              @db.DateTime(6)
+  updated_at                                                                    DateTime              @db.DateTime(6)
+  is_open                                                                       Boolean
+  user1_id                                                                      BigInt
+  user2_id                                                                      BigInt
+  playdate_auth_account_friendship_manager_chat_user1_idToplaydate_auth_account playdate_auth_account @relation("friendship_manager_chat_user1_idToplaydate_auth_account", fields: [user1_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_c_user1_id_911fc10a_fk_playdate_")
+  playdate_auth_account_friendship_manager_chat_user2_idToplaydate_auth_account playdate_auth_account @relation("friendship_manager_chat_user2_idToplaydate_auth_account", fields: [user2_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_c_user2_id_31bde820_fk_playdate_")
+
+  @@index([user1_id], map: "friendship_manager_c_user1_id_911fc10a_fk_playdate_")
+  @@index([user2_id], map: "friendship_manager_c_user2_id_31bde820_fk_playdate_")
+}
+
+model friendship_manager_friend {
+  relation_id                 BigInt                      @id
+  friendship_manager_relation friendship_manager_relation @relation(fields: [relation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_f_relation_id_92fffa15_fk_friendshi")
+}
+
+model friendship_manager_hidden {
+  relation_id                 BigInt                      @id
+  friendship_manager_relation friendship_manager_relation @relation(fields: [relation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_h_relation_id_631f6391_fk_friendshi")
+}
+
+model friendship_manager_invisiblelist {
+  account_id_id BigInt
+  email         String?   @db.VarChar(200)
+  id            BigInt    @id @default(autoincrement())
+  created_at    DateTime? @db.DateTime(0)
+}
+
+model friendship_manager_pendinglist {
+  relation_id                 BigInt                      @id
+  is_deleted                  Boolean
+  friendship_manager_relation friendship_manager_relation @relation(fields: [relation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_p_relation_id_8b9611c6_fk_friendshi")
+}
+
+model friendship_manager_profileview {
+  relation_ptr_id             BigInt                      @id
+  friendship_manager_relation friendship_manager_relation @relation(fields: [relation_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_p_relation_ptr_id_6d9e898d_fk_friendshi")
+}
+
+model friendship_manager_relation {
+  id                                                                                BigInt                          @id @default(autoincrement())
+  created_at                                                                        DateTime                        @db.DateTime(6)
+  updated_at                                                                        DateTime                        @db.DateTime(6)
+  user1_id                                                                          BigInt
+  user2_id                                                                          BigInt
+  friendship_manager_blocklist                                                      friendship_manager_blocklist?
+  friendship_manager_friend                                                         friendship_manager_friend?
+  friendship_manager_hidden                                                         friendship_manager_hidden?
+  friendship_manager_pendinglist                                                    friendship_manager_pendinglist?
+  friendship_manager_profileview                                                    friendship_manager_profileview?
+  playdate_auth_account_friendship_manager_relation_user1_idToplaydate_auth_account playdate_auth_account           @relation("friendship_manager_relation_user1_idToplaydate_auth_account", fields: [user1_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_r_user1_id_20b2c55f_fk_playdate_")
+  playdate_auth_account_friendship_manager_relation_user2_idToplaydate_auth_account playdate_auth_account           @relation("friendship_manager_relation_user2_idToplaydate_auth_account", fields: [user2_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_r_user2_id_4325293c_fk_playdate_")
+  friendship_manager_reportlist                                                     friendship_manager_reportlist?
+  friendship_manager_savedlist                                                      friendship_manager_savedlist?
+
+  @@index([user1_id], map: "friendship_manager_r_user1_id_20b2c55f_fk_playdate_")
+  @@index([user2_id], map: "friendship_manager_r_user2_id_4325293c_fk_playdate_")
+}
+
+model friendship_manager_reportlist {
+  relation_id                 BigInt                      @id
+  reason                      String?                     @db.VarChar(1000)
+  friendship_manager_relation friendship_manager_relation @relation(fields: [relation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_r_relation_id_427a6c4e_fk_friendshi")
+}
+
+model friendship_manager_savedlist {
+  relation_id                 BigInt                      @id
+  friendship_manager_relation friendship_manager_relation @relation(fields: [relation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friendship_manager_s_relation_id_66da6bfe_fk_friendshi")
+}
+
+model notification_manager_notifications {
+  id                                     BigInt                                   @id @default(autoincrement())
+  type                                   String                                   @unique(map: "type") @db.VarChar(50)
+  text                                   String                                   @db.LongText
+  icon                                   String                                   @db.LongText
+  action                                 String                                   @db.LongText
+  created_at                             DateTime                                 @db.DateTime(6)
+  notification_manager_usernotifications notification_manager_usernotifications[]
+}
+
+model notification_manager_usernotifications {
+  id                                                                                            BigInt                             @id @default(autoincrement())
+  related_user                                                                                  Json?
+  read                                                                                          Boolean
+  created_at                                                                                    DateTime                           @db.DateTime(6)
+  sender_id                                                                                     BigInt
+  type_id                                                                                       BigInt
+  user_id                                                                                       BigInt
+  playdate_auth_account_notification_manager_usernotifications_sender_idToplaydate_auth_account playdate_auth_account              @relation("notification_manager_usernotifications_sender_idToplaydate_auth_account", fields: [sender_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notification_manager_sender_id_3bb3b85a_fk_playdate_")
+  notification_manager_notifications                                                            notification_manager_notifications @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notification_manager_type_id_aa3a3741_fk_notificat")
+  playdate_auth_account_notification_manager_usernotifications_user_idToplaydate_auth_account   playdate_auth_account              @relation("notification_manager_usernotifications_user_idToplaydate_auth_account", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notification_manager_user_id_d22fcadc_fk_playdate_")
+
+  @@index([sender_id], map: "notification_manager_sender_id_3bb3b85a_fk_playdate_")
+  @@index([type_id], map: "notification_manager_type_id_aa3a3741_fk_notificat")
+  @@index([user_id], map: "notification_manager_user_id_d22fcadc_fk_playdate_")
+}
+
+model plans_manager_accountsubscription {
+  id                     BigInt                @id @default(autoincrement())
+  plan_id                String?               @db.VarChar(255)
+  purchase_token         String                @db.Text
+  base_plan_id           String?               @db.VarChar(255)
+  order_id               String?               @db.VarChar(255)
+  start_time             DateTime              @db.DateTime(0)
+  expiry_time            DateTime              @db.DateTime(0)
+  auto_renewing          Boolean
+  price_amount           Int
+  country_code           String                @db.VarChar(25)
+  price_currency_code    String                @db.VarChar(50)
+  payment_status         Int
+  purchase_type          String                @db.VarChar(255)
+  acknowledgement_status String?               @db.VarChar(255)
+  kind                   String?               @db.VarChar(255)
+  is_canceled            Boolean
+  account_id_id          BigInt
+  created_at             DateTime?             @db.DateTime(0)
+  type                   String?               @db.VarChar(255)
+  playdate_auth_account  playdate_auth_account @relation(fields: [account_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "plans_manager_accoun_account_id_id_34e279a3_fk_playdate_")
+
+  @@index([account_id_id], map: "plans_manager_accoun_account_id_id_34e279a3_fk_playdate_")
+}
+
+model playdate_auth_account {
+  id                                                                                                             BigInt                                   @id @default(autoincrement())
+  first_name                                                                                                     String?                                  @db.VarChar(255)
+  last_name                                                                                                      String?                                  @db.VarChar(255)
+  name                                                                                                           String                                   @db.VarChar(255)
+  username                                                                                                       String                                   @db.VarChar(30)
+  password                                                                                                       String                                   @db.VarChar(200)
+  phone                                                                                                          String?                                  @db.VarChar(20)
+  email                                                                                                          String?                                  @unique(map: "email") @db.VarChar(254)
+  registered_by_app                                                                                              Boolean?
+  subscription_flag                                                                                              Int?
+  address                                                                                                        String?                                  @db.VarChar(500)
+  timezone_diff_mins                                                                                             Int?
+  block_message                                                                                                  String?                                  @db.LongText
+  social_media_flag                                                                                              Boolean
+  login_count                                                                                                    Int?
+  last_login                                                                                                     DateTime?                                @db.DateTime(6)
+  date_joined                                                                                                    DateTime?                                @db.DateTime(6)
+  created_at                                                                                                     DateTime?                                @db.DateTime(6)
+  updated_at                                                                                                     DateTime?                                @db.DateTime(6)
+  step                                                                                                           Int
+  is_login                                                                                                       Boolean
+  is_block_list                                                                                                  Boolean
+  is_deleted                                                                                                     Boolean
+  is_staff                                                                                                       Boolean
+  is_superuser                                                                                                   Boolean
+  is_active                                                                                                      Boolean?
+  is_verified                                                                                                    Boolean?
+  is_email_verified                                                                                              Boolean?
+  is_profile_completed                                                                                           Boolean?
+  force_password_change_on_first_time                                                                            Boolean
+  is_old                                                                                                         Boolean
+  verification_image                                                                                             String?                                  @db.VarChar(500)
+  fetish                                                                                                         Boolean?
+  is_escort                                                                                                      Boolean?
+  zodiac                                                                                                         Int?
+  chat_imported                                                                                                  Int?
+  is_verification_image                                                                                          Boolean?
+  account_emailaddress                                                                                           account_emailaddress[]
+  authtoken_token                                                                                                authtoken_token?
+  chat_manager_chatsession_chat_manager_chatsession_receiver_id_idToplaydate_auth_account                        chat_manager_chatsession[]               @relation("chat_manager_chatsession_receiver_id_idToplaydate_auth_account")
+  chat_manager_chatsession_chat_manager_chatsession_sender_id_idToplaydate_auth_account                          chat_manager_chatsession[]               @relation("chat_manager_chatsession_sender_id_idToplaydate_auth_account")
+  chat_manager_message_chat_manager_message_receiver_id_idToplaydate_auth_account                                chat_manager_message[]                   @relation("chat_manager_message_receiver_id_idToplaydate_auth_account")
+  chat_manager_message_chat_manager_message_sender_id_idToplaydate_auth_account                                  chat_manager_message[]                   @relation("chat_manager_message_sender_id_idToplaydate_auth_account")
+  content_manager_interest                                                                                       content_manager_interest[]
+  content_manager_like                                                                                           content_manager_like[]
+  django_admin_log                                                                                               django_admin_log[]
+  fcm_django_fcmdevice                                                                                           fcm_django_fcmdevice[]
+  friendship_manager_chat_friendship_manager_chat_user1_idToplaydate_auth_account                                friendship_manager_chat[]                @relation("friendship_manager_chat_user1_idToplaydate_auth_account")
+  friendship_manager_chat_friendship_manager_chat_user2_idToplaydate_auth_account                                friendship_manager_chat[]                @relation("friendship_manager_chat_user2_idToplaydate_auth_account")
+  friendship_manager_relation_friendship_manager_relation_user1_idToplaydate_auth_account                        friendship_manager_relation[]            @relation("friendship_manager_relation_user1_idToplaydate_auth_account")
+  friendship_manager_relation_friendship_manager_relation_user2_idToplaydate_auth_account                        friendship_manager_relation[]            @relation("friendship_manager_relation_user2_idToplaydate_auth_account")
+  notification_manager_usernotifications_notification_manager_usernotifications_sender_idToplaydate_auth_account notification_manager_usernotifications[] @relation("notification_manager_usernotifications_sender_idToplaydate_auth_account")
+  notification_manager_usernotifications_notification_manager_usernotifications_user_idToplaydate_auth_account   notification_manager_usernotifications[] @relation("notification_manager_usernotifications_user_idToplaydate_auth_account")
+  plans_manager_accountsubscription                                                                              plans_manager_accountsubscription[]
+  playdate_auth_account_groups                                                                                   playdate_auth_account_groups[]
+  playdate_auth_account_user_permissions                                                                         playdate_auth_account_user_permissions[]
+  playdate_auth_accountmanagertoken                                                                              playdate_auth_accountmanagertoken?
+  playdate_auth_devicetoken                                                                                      playdate_auth_devicetoken[]
+  playdate_auth_profile                                                                                          playdate_auth_profile?
+  playdate_auth_purchase                                                                                         playdate_auth_purchase[]
+  playdate_auth_savedidea                                                                                        playdate_auth_savedidea[]
+  promo_manager_userpromocode                                                                                    promo_manager_userpromocode[]
+  socialaccount_socialaccount                                                                                    socialaccount_socialaccount[]
+}
+
+model playdate_auth_account_groups {
+  id                    BigInt                @id @default(autoincrement())
+  account_id            BigInt
+  group_id              Int
+  playdate_auth_account playdate_auth_account @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_accoun_account_id_93c1165f_fk_playdate_")
+  auth_group            auth_group            @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_account_groups_group_id_8019e51d_fk_auth_group_id")
+
+  @@unique([account_id, group_id], map: "playdate_auth_account_groups_account_id_group_id_67f17108_uniq")
+  @@index([group_id], map: "playdate_auth_account_groups_group_id_8019e51d_fk_auth_group_id")
+}
+
+model playdate_auth_account_user_permissions {
+  id                    BigInt                @id @default(autoincrement())
+  account_id            BigInt
+  permission_id         Int
+  playdate_auth_account playdate_auth_account @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_accoun_account_id_ed352847_fk_playdate_")
+  auth_permission       auth_permission       @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_accoun_permission_id_8dc42d2b_fk_auth_perm")
+
+  @@unique([account_id, permission_id], map: "playdate_auth_account_us_account_id_permission_id_5bcaccd7_uniq")
+  @@index([permission_id], map: "playdate_auth_accoun_permission_id_8dc42d2b_fk_auth_perm")
+}
+
+model playdate_auth_accountmanagertoken {
+  id                    BigInt                @id @default(autoincrement())
+  token                 Int
+  created_at            DateTime              @db.DateTime(6)
+  account_id            BigInt                @unique(map: "account_id")
+  playdate_auth_account playdate_auth_account @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_accoun_account_id_61275bbf_fk_playdate_")
+}
+
+model playdate_auth_devicetoken {
+  id                    BigInt                @id @default(autoincrement())
+  token                 String                @db.VarChar(255)
+  device_type           Int
+  device_details        String?               @db.VarChar(255)
+  customer_id_id        BigInt
+  playdate_auth_account playdate_auth_account @relation(fields: [customer_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_device_customer_id_id_5f5929f1_fk_playdate_")
+
+  @@index([customer_id_id], map: "playdate_auth_device_customer_id_id_5f5929f1_fk_playdate_")
+}
+
+model playdate_auth_profile {
+  id                           BigInt                        @id @default(autoincrement())
+  about                        String?                       @db.LongText
+  dob                          DateTime?                     @db.Date
+  gender                       String?                       @db.VarChar(200)
+  looking_for                  String?                       @db.VarChar(200)
+  location                     String?                       @db.VarChar(255)
+  height                       Int?
+  weight                       Int?
+  job                          String?                       @db.VarChar(255)
+  language                     String?                       @db.VarChar(255)
+  education                    String?                       @db.VarChar(255)
+  pets                         String?                       @db.VarChar(255)
+  address                      String?                       @db.VarChar(500)
+  latitude                     Float?
+  longitude                    Float?
+  status                       String?                       @db.VarChar(20)
+  created_at                   DateTime?                     @db.DateTime(6)
+  updated_at                   DateTime?                     @db.DateTime(6)
+  account_id                   BigInt                        @unique(map: "account_id")
+  content_manager_answer       content_manager_answer[]
+  playdate_auth_account        playdate_auth_account         @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_profil_account_id_bdf7290b_fk_playdate_")
+  playdate_auth_profilepic     playdate_auth_profilepic[]
+  playdate_auth_profilesetting playdate_auth_profilesetting?
+  playdate_auth_questioninfo   playdate_auth_questioninfo?
+}
+
+model playdate_auth_profilepic {
+  id                    BigInt                @id @default(autoincrement())
+  link                  String                @db.VarChar(500)
+  is_profile            Boolean
+  created_at            DateTime              @db.DateTime(6)
+  updated_at            DateTime              @db.DateTime(6)
+  is_deleted            Boolean
+  is_active             Boolean?
+  profile_id            BigInt
+  order                 Int?
+  playdate_auth_profile playdate_auth_profile @relation(fields: [profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_profil_profile_id_27ee9d45_fk_playdate_")
+
+  @@index([profile_id], map: "playdate_auth_profil_profile_id_27ee9d45_fk_playdate_")
+}
+
+model playdate_auth_profilesetting {
+  id                    BigInt                @id @default(autoincrement())
+  show_dob              Boolean?
+  show_location         Boolean
+  notification_alert    Boolean?
+  chat_request_alert    Boolean
+  chat_msg_alert        Boolean
+  profile_id            BigInt                @unique(map: "profile_id")
+  playdate_auth_profile playdate_auth_profile @relation(fields: [profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_profil_profile_id_3b639210_fk_playdate_")
+}
+
+model playdate_auth_purchase {
+  id                    BigInt                @id @default(autoincrement())
+  created_at            DateTime              @db.DateTime(6)
+  updated_at            DateTime              @db.DateTime(6)
+  account_id_id         BigInt
+  plan_id_id            BigInt
+  playdate_auth_account playdate_auth_account @relation(fields: [account_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_purcha_account_id_id_d06b2c86_fk_playdate_")
+  stripe_manager_plan   stripe_manager_plan   @relation(fields: [plan_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_purcha_plan_id_id_9c274914_fk_stripe_ma")
+
+  @@index([account_id_id], map: "playdate_auth_purcha_account_id_id_d06b2c86_fk_playdate_")
+  @@index([plan_id_id], map: "playdate_auth_purcha_plan_id_id_9c274914_fk_stripe_ma")
+}
+
+model playdate_auth_questioninfo {
+  id                                        BigInt                                      @id @default(autoincrement())
+  number_of_children                        Int
+  children_living_status                    String?                                     @db.VarChar(255)
+  children_age                              String                                      @db.VarChar(255)
+  open_for_more                             String?                                     @db.VarChar(255)
+  employment_state                          String?                                     @db.VarChar(255)
+  job_title                                 String?                                     @db.VarChar(255)
+  profile_id                                BigInt                                      @unique(map: "profile_id")
+  header_about                              String?                                     @db.VarChar(255)
+  description                               String?                                     @db.Text
+  playdate_auth_profile                     playdate_auth_profile                       @relation(fields: [profile_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_questi_profile_id_ed942861_fk_playdate_")
+  playdate_auth_questioninfo_relation_goals playdate_auth_questioninfo_relation_goals[]
+}
+
+model playdate_auth_questioninfo_relation_goals {
+  id                         BigInt                     @id @default(autoincrement())
+  questioninfo_id            BigInt
+  goal_id                    BigInt
+  content_manager_goal       content_manager_goal       @relation(fields: [goal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_questi_goal_id_fe015fff_fk_content_m")
+  playdate_auth_questioninfo playdate_auth_questioninfo @relation(fields: [questioninfo_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_questi_questioninfo_id_b2aeea1d_fk_playdate_")
+
+  @@unique([questioninfo_id, goal_id], map: "playdate_auth_questionin_questioninfo_id_goal_id_5308c59f_uniq")
+  @@index([goal_id], map: "playdate_auth_questi_goal_id_fe015fff_fk_content_m")
+}
+
+model playdate_auth_savedidea {
+  id                    BigInt                @id @default(autoincrement())
+  created_at            DateTime              @db.DateTime(6)
+  updated_at            DateTime              @db.DateTime(6)
+  account_id_id         BigInt
+  idea_id_id            BigInt
+  playdate_auth_account playdate_auth_account @relation(fields: [account_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_savedi_account_id_id_ceb35341_fk_playdate_")
+  content_manager_idea  content_manager_idea  @relation(fields: [idea_id_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playdate_auth_savedi_idea_id_id_64a397e5_fk_content_m")
+
+  @@index([account_id_id], map: "playdate_auth_savedi_account_id_id_ceb35341_fk_playdate_")
+  @@index([idea_id_id], map: "playdate_auth_savedi_idea_id_id_64a397e5_fk_content_m")
+}
+
+model promo_manager_promocode {
+  id                          BigInt                        @id @default(autoincrement())
+  code                        String                        @unique(map: "code") @db.VarChar(20)
+  description                 String                        @db.LongText
+  validity_duration           BigInt
+  is_active                   Boolean
+  max_uses                    Int
+  used_count                  Int
+  plan_id                     String?                       @db.VarChar(255)
+  promo_manager_userpromocode promo_manager_userpromocode[]
+}
+
+model promo_manager_userpromocode {
+  id                      BigInt                  @id @default(autoincrement())
+  date_used               DateTime                @db.DateTime(6)
+  promo_code_id           BigInt
+  user_id                 BigInt
+  promo_manager_promocode promo_manager_promocode @relation(fields: [promo_code_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_manager_userpr_promo_code_id_c1f89c06_fk_promo_man")
+  playdate_auth_account   playdate_auth_account   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "promo_manager_userpr_user_id_624da4fc_fk_playdate_")
+
+  @@index([promo_code_id], map: "promo_manager_userpr_promo_code_id_c1f89c06_fk_promo_man")
+  @@index([user_id], map: "promo_manager_userpr_user_id_624da4fc_fk_playdate_")
+}
+
+model socialaccount_socialaccount {
+  id                        Int                         @id @default(autoincrement())
+  provider                  String                      @db.VarChar(30)
+  uid                       String
+  last_login                DateTime                    @db.DateTime(6)
+  date_joined               DateTime                    @db.DateTime(6)
+  extra_data                String                      @db.LongText
+  user_id                   BigInt
+  playdate_auth_account     playdate_auth_account       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "socialaccount_social_user_id_8146e70c_fk_playdate_")
+  socialaccount_socialtoken socialaccount_socialtoken[]
+
+  @@unique([provider, uid], map: "socialaccount_socialaccount_provider_uid_fc810c6e_uniq")
+  @@index([user_id], map: "socialaccount_social_user_id_8146e70c_fk_playdate_")
+}
+
+model socialaccount_socialapp {
+  id                        Int                         @id @default(autoincrement())
+  provider                  String                      @db.VarChar(30)
+  name                      String                      @db.VarChar(40)
+  client_id                 String
+  secret                    String
+  key                       String
+  socialaccount_socialtoken socialaccount_socialtoken[]
+}
+
+model socialaccount_socialtoken {
+  id                          Int                         @id @default(autoincrement())
+  token                       String                      @db.LongText
+  token_secret                String                      @db.LongText
+  expires_at                  DateTime?                   @db.DateTime(6)
+  account_id                  Int
+  app_id                      Int
+  socialaccount_socialaccount socialaccount_socialaccount @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "socialaccount_social_account_id_951f210e_fk_socialacc")
+  socialaccount_socialapp     socialaccount_socialapp     @relation(fields: [app_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "socialaccount_social_app_id_636a42d7_fk_socialacc")
+
+  @@unique([app_id, account_id], map: "socialaccount_socialtoken_app_id_account_id_fca4e0ac_uniq")
+  @@index([account_id], map: "socialaccount_social_account_id_951f210e_fk_socialacc")
+}
+
+model stripe_manager_plan {
+  id                     BigInt                   @id @default(autoincrement())
+  title                  String?                  @db.VarChar(255)
+  description            String?                  @db.LongText
+  price                  Float
+  details                Json?
+  created_at             DateTime                 @db.DateTime(6)
+  updated_at             DateTime                 @db.DateTime(6)
+  playdate_auth_purchase playdate_auth_purchase[]
+}
