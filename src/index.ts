@@ -9,6 +9,8 @@ import { router } from './routes/router'
 
 const port = process.env.PORT;
 
+console.log("env: ", process.env.PORT)
+
 async function main() {
   const fastify = Fastify({
     logger: true,
@@ -69,7 +71,7 @@ async function main() {
 
     // fastify.post('/add-image', addImage)
     // fastify.put('/change-order-image/:imageId', changeOrderImage)
-    console.log("Server running at port " + port)
+    console.log("🚀Server running at port " + port)
 
     await fastify.listen({
       port: +port!,
