@@ -6,7 +6,7 @@ import fastifyEnv from '@fastify/env'
 import swagger from '@fastify/swagger'
 import Fastify from 'fastify'
 import multer from 'fastify-multer'
-import { router } from './src/routes/router'
+import { router } from './routes/router'
 
 async function main() {
   const fastify = Fastify({
