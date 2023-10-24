@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import "dotenv/config"
 /* eslint-disable @typescript-eslint/no-var-requires */
 // import cors from "cors";
 import cors from '@fastify/cors'
