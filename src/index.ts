@@ -9,7 +9,7 @@ import { router } from './routes/router'
 
 const port = process.env.PORT;
 
-console.log("env: ", process.env.PORT)
+console.log("env: ", process.env)
 
 async function main() {
   const fastify = Fastify({
