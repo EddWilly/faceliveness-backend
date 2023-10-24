@@ -11,7 +11,7 @@ async function main() {
   const fastify = Fastify({
     logger: true,
   })
-  const port = process.env.PORT
+  const port = process.env.PORT || 3000;
 
   try {
     fastify.register(cors)
@@ -71,7 +71,7 @@ async function main() {
     console.log("Server running at port " + port)
 
     await fastify.listen({
-      port: parseInt(port ?? '') || 8000,
+      port: +port,
     })
   } catch (err) {
     fastify.log.error(err)
