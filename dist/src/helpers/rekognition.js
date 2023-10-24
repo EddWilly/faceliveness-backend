@@ -7,8 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRekognitionClient = void 0;
 const client_rekognition_1 = require("@aws-sdk/client-rekognition");
 const aws_amplify_1 = require("aws-amplify");
-const aws_exports_js_1 = __importDefault(require("../aws-exports.js"));
-aws_amplify_1.Amplify.configure({ ...aws_exports_js_1.default, ssr: true });
+const aws_exports_1 = __importDefault(require("../aws-exports"));
+aws_amplify_1.Amplify.configure({ ...aws_exports_1.default, ssr: true });
 async function getRekognitionClient(req) {
     try {
         const { Credentials } = (0, aws_amplify_1.withSSRContext)({ req });
