@@ -1,9 +1,14 @@
-import { Request, Response } from 'express'
+import { FastifyReply, FastifyRequest } from 'fastify'
+import { z } from 'zod'
 import { openAiConfig } from '../configs/openai'
 
-export async function checkTextContentController(req: Request, res: Response) {
+const bodySchema = z.object({
+  input: z.string(),
+})
+
+export async function checkTextContentController(req: FastifyRequest, reply: FastifyReply) {
   try {
-    const { input } = req.body
+    const { input } = bodySchema.parse(req.body)
 
     const response = await openAiConfig.moderations.create({
       input,
@@ -11,8 +16,8 @@ export async function checkTextContentController(req: Request, res: Response) {
 
     const flagged = response.results[0].flagged
 
-    return res.json({ inappropriate: flagged })
+    return reply.send({ inappropriate: flagged })
   } catch (err) {
-    return res.status(500).json(err)
+    return reply.status(500).send(err)
   }
 }
