@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify'
+import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
 import { prismaClient } from '../configs/prisma'
@@ -8,8 +8,8 @@ const paramsParser = z.object({
 })
 
 export async function removeImageProfilePicController(
-  req: FastifyRequest,
-  reply: FastifyReply,
+  req: Request,
+  reply: Response,
 ) {
   try {
     const { imageId } = paramsParser.parse(req.params)
@@ -19,7 +19,7 @@ export async function removeImageProfilePicController(
         id: imageId,
       },
     })
-    reply.code(StatusCodes.NO_CONTENT)
+    reply.status(StatusCodes.NO_CONTENT)
   } catch (err) {
     console.log(err)
   }

@@ -1,6 +1,5 @@
-import { FastifyReply } from 'fastify'
+import { Request, Response } from 'express'
 import { ZodError, z } from 'zod'
-import { CustonRequest } from '../@types/request'
 import { ExplicitNudityError } from '../errors/ExplicitNudityError'
 import { ImageNotFountError } from '../errors/ImageNotFounError'
 import { addImageToProfilePic } from '../services/addImageToProfilePic'
@@ -11,10 +10,7 @@ const bodySchema = z.object({
   isProfile: z.string().transform((str) => str === 'true'),
 })
 
-export async function addImageProfileController(
-  req: CustonRequest,
-  reply: FastifyReply,
-) {
+export async function addImageProfileController(req: Request, reply: Response) {
   try {
     const { isProfile, order, userId } = bodySchema.parse(req.body)
 
@@ -30,7 +26,7 @@ export async function addImageProfileController(
       isProfile,
     })
 
-    reply.code(201).send({
+    reply.status(201).json({
       link: response.link,
       order: response.order,
       is_profile: response.is_profile,
@@ -38,21 +34,21 @@ export async function addImageProfileController(
     })
   } catch (err) {
     if (err instanceof ZodError) {
-      reply.code(400).send({
+      reply.status(400).json({
         error: JSON.parse(err.message),
       })
     }
     if (err instanceof ImageNotFountError) {
-      reply.code(err.code).send({
+      reply.status(err.code).json({
         error: err.message,
       })
     }
     if (err instanceof ExplicitNudityError) {
-      reply.code(err.code).send({
+      reply.status(err.code).json({
         error: err.message,
       })
     }
-    reply.code(500).send({
+    reply.status(500).json({
       error: err,
       message: 'Internal server error',
     })

@@ -1,11 +1,11 @@
 // pages/api/get.js
 
-import { FastifyReply, FastifyRequest } from 'fastify'
+import { Request, Response } from 'express'
 import { getRekognitionClient } from '../helpers/rekognition'
 
 export async function createRekognitionClientSessionController(
-  req: FastifyRequest,
-  reply: FastifyReply,
+  req: Request,
+  reply: Response,
 ) {
   const { sessionId } = req.query as { sessionId: string }
   const rekognition = await getRekognitionClient()
@@ -16,14 +16,14 @@ export async function createRekognitionClientSessionController(
     .then((resp) => resp)
 
   if (!response) {
-    return reply.code(404).send({
+    return reply.status(404).json({
       error: 'Session not found',
     })
   }
 
   const isLive = response?.Confidence && response?.Confidence >= 65
 
-  reply.code(200).send({
+  reply.status(200).json({
     isLive,
   })
 }

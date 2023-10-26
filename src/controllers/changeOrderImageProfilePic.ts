@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify'
+import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
 import { prismaClient } from '../configs/prisma'
@@ -11,8 +11,8 @@ const paramsOrderSchema = z.object({
 })
 
 export async function changeOrderImageProfilePic(
-  req: FastifyRequest,
-  reply: FastifyReply,
+  req: Request,
+  reply: Response,
 ) {
   try {
     const { imageId } = paramsOrderSchema.parse(req.params)
@@ -27,7 +27,7 @@ export async function changeOrderImageProfilePic(
       },
     })
 
-    reply.code(StatusCodes.NO_CONTENT)
+    reply.status(StatusCodes.NO_CONTENT).send()
   } catch (err) {
     console.log(err)
   }

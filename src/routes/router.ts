@@ -1,5 +1,5 @@
-import { FastifyInstance } from 'fastify'
-import multer from 'fastify-multer'
+import { Request, Response, Router } from 'express'
+import multer from 'multer'
 import { addImageProfileController } from '../controllers/addImageProfilePic'
 import { changeOrderImageProfilePic } from '../controllers/changeOrderImageProfilePic'
 import { checkForInappropriateContentController } from '../controllers/checkForInappropriateContent'
@@ -9,30 +9,28 @@ import { removeImageProfilePicController } from '../controllers/removeImageProfi
 
 const uploader = multer({})
 
-export async function router(instance: FastifyInstance) {
-  instance.get('/heath', () => {
-    return {
-      ok: true,
-    }
-  })
+const router = Router()
 
-  instance.post(
-    '/add-image',
-    { preHandler: uploader.single('image') },
-    addImageProfileController,
-  )
-  instance.put('/change-order/:imageId', changeOrderImageProfilePic)
-  instance.get('/api/createSession', createRekognitionClientSessionController)
-  instance.get(
-    '/api/checkInappropriateContent',
-    checkForInappropriateContentController,
-  )
-  instance.get(
-    '/api/getFaceLivenessResults',
-    getRekognitionClientSessionResultController,
-  )
-  instance.delete('/deleteImage/:imageId', removeImageProfilePicController)
-}
+router.get('/heath', (req: Request, res: Response) => {
+  res.json({
+    ok: true,
+  })
+})
+
+router.post('/add-image', uploader.single('image'), addImageProfileController)
+router.put('/change-order/:imageId', changeOrderImageProfilePic)
+router.get('/api/createSession', createRekognitionClientSessionController)
+router.get(
+  '/api/checkInappropriateContent',
+  checkForInappropriateContentController,
+)
+router.get(
+  '/api/getFaceLivenessResults',
+  getRekognitionClientSessionResultController,
+)
+router.delete('/deleteImage/:imageId', removeImageProfilePicController)
+
+export { router }
 
 // app.get("/api/createSession", async (request, response) => {
 //   const sessionId = await createSessionHandler(request, response);

@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify'
+import { Request, Response } from 'express'
 import { z } from 'zod'
 import { getSessionResultHandler } from '../services/rekognitionClientSessionResult'
 
@@ -7,17 +7,17 @@ const query = z.object({
 })
 
 export async function getRekognitionClientSessionResultController(
-  req: FastifyRequest,
-  reply: FastifyReply,
+  req: Request,
+  reply: Response,
 ) {
   try {
     const { sessionId } = query.parse(req.query)
 
     const result = await getSessionResultHandler(sessionId)
 
-    reply.send(result)
+    reply.json(result)
   } catch (err) {
-    reply.code(500).send({
+    reply.status(500).json({
       error:
         'Internal server error! It was not possible to create a liveness session',
     })
