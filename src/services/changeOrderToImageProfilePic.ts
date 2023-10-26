@@ -23,7 +23,6 @@ export async function changeOrderToImageProfilePic(
   await prismaClient.playdate_auth_profilepic.updateMany({
     where: {
       profile_id: Number(result.playdate_auth_profile.id),
-      order,
       NOT: {
         id: imageId,
       },
