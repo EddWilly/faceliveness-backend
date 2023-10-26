@@ -81,6 +81,7 @@ export async function addImageToProfilePic(input: Input) {
       profile_id: input.userId,
       link: url,
       is_deleted: false,
+      is_active: true,
       updated_at: new Date(),
     },
     select: {
