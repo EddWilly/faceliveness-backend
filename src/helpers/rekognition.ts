@@ -2,12 +2,12 @@
 
 import { Rekognition } from '@aws-sdk/client-rekognition'
 import { Amplify, withSSRContext } from 'aws-amplify'
-import { FastifyRequest } from 'fastify'
+import { Request } from 'express'
 import awsExports from '../aws-exports'
 
 Amplify.configure({ ...awsExports, ssr: true })
 
-export async function getRekognitionClient(req?: FastifyRequest) {
+export async function getRekognitionClient(req?: Request) {
   try {
     const { Credentials } = withSSRContext({ req })
 

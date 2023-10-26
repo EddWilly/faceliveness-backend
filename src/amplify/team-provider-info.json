@@ -1,0 +1,38 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-facelivenessbackend-dev-151827-authRole",
+      "UnauthRoleArn": "arn:aws:iam::457223050198:role/amplify-facelivenessbackend-dev-151827-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::457223050198:role/amplify-facelivenessbackend-dev-151827-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-facelivenessbackend-dev-151827-deployment",
+      "UnauthRoleName": "amplify-facelivenessbackend-dev-151827-unauthRole",
+      "StackName": "amplify-facelivenessbackend-dev-151827",
+      "StackId": "arn:aws:cloudformation:eu-west-2:457223050198:stack/amplify-facelivenessbackend-dev-151827/113486a0-ef5f-11ed-a95e-0abf029fc6b0",
+      "AmplifyAppId": "duffa64sf9oi7"
+    },
+    "categories": {
+      "auth": {
+        "facelivenessbackendbfdb53fd": {}
+      }
+    }
+  },
+  "youmna": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-facelivenessbackend-youmna-161624-authRole",
+      "UnauthRoleArn": "arn:aws:iam::457223050198:role/amplify-facelivenessbackend-youmna-161624-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::457223050198:role/amplify-facelivenessbackend-youmna-161624-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-facelivenessbackend-youmna-161624-deployment",
+      "UnauthRoleName": "amplify-facelivenessbackend-youmna-161624-unauthRole",
+      "StackName": "amplify-facelivenessbackend-youmna-161624",
+      "StackId": "arn:aws:cloudformation:us-east-1:457223050198:stack/amplify-facelivenessbackend-youmna-161624/1c163fe0-19d6-11ee-bbcd-0a9278f47d75",
+      "AmplifyAppId": "d3qyl8l4li5kay"
+    },
+    "categories": {
+      "auth": {
+        "facelivenessbackendbfdb53fd": {}
+      }
+    }
+  }
+}
