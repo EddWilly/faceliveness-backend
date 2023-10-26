@@ -1,6 +1,7 @@
 import { Rekognition } from '@aws-sdk/client-rekognition'
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { withSSRContext } from 'aws-amplify'
+import { Request } from 'express'
 import { randomUUID } from 'node:crypto'
 import { BUCKET_NAME } from '../common/constants'
 import { bucket } from '../configs/bucket'
@@ -22,7 +23,7 @@ type Input = {
   isProfile: boolean
 }
 
-export async function addImageToProfilePic(input: Input) {
+export async function addImageToProfilePic(input: Input, req: Request) {
   const { image } = input
 
   const key = randomUUID().replaceAll('-', '')
@@ -35,7 +36,7 @@ export async function addImageToProfilePic(input: Input) {
   })
   await bucket.send(command)
 
-  const { Credentials } = withSSRContext({})
+  const { Credentials } = withSSRContext({ req })
   const credentials = await Credentials.get()
 
   const rekognition = new Rekognition({

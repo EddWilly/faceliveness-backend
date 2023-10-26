@@ -1,18 +1,19 @@
 import { Rekognition } from '@aws-sdk/client-rekognition'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { withSSRContext } from 'aws-amplify'
-import { FastifyRequest } from 'fastify'
+import { Request, Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
 import { BUCKET_NAME } from '../common/constants'
 import { bucket } from '../configs/bucket'
-import { CheckInappropriateContent } from '../errors/CheckInappropriateContent'
 
 const query = z.object({
   objectKey: z.string(),
 })
 
 export const checkForInappropriateContentController = async (
-  req: FastifyRequest,
+  req: Request,
+  res: Response,
 ) => {
   const { objectKey } = query.parse(req.query)
 
@@ -57,15 +58,17 @@ export const checkForInappropriateContentController = async (
 
       await bucket.send(command)
 
-      return response
+      res.json(response)
     }
     const response = {
       inappropriate: false,
     }
 
-    return response
+    res.json(response)
   } catch (err) {
-    throw new CheckInappropriateContent(500, 'Something went wrong')
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: err,
+    })
   }
 }
 // https://s3.eu-west-2.amazonaws.com/playdate.prod/1688064616

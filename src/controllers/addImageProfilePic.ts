@@ -19,12 +19,15 @@ export async function addImageProfileController(req: Request, reply: Response) {
     if (!image) {
       throw new ImageNotFountError('Image not found')
     }
-    const response = await addImageToProfilePic({
-      image,
-      userId,
-      order,
-      isProfile,
-    })
+    const response = await addImageToProfilePic(
+      {
+        image,
+        userId,
+        order,
+        isProfile,
+      },
+      req,
+    )
 
     reply.status(201).json({
       link: response.link,
