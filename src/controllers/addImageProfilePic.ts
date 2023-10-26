@@ -33,6 +33,7 @@ export async function addImageProfileController(req: Request, reply: Response) {
       id: Number(response.id),
     })
   } catch (err) {
+    console.log({ err })
     if (err instanceof ZodError) {
       reply.status(400).json({
         error: JSON.parse(err.message),

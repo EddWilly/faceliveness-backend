@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
-import { prismaClient } from '../configs/prisma'
+import { changeOrderToImageProfilePic } from '../services/changeOrderToImageProfilePic'
 
 const changeOrderSchema = z.object({
   newOrder: z.number(),
@@ -18,17 +18,12 @@ export async function changeOrderImageProfilePic(
     const { imageId } = paramsOrderSchema.parse(req.params)
     const { newOrder } = changeOrderSchema.parse(req.body)
 
-    await prismaClient.playdate_auth_profilepic.update({
-      where: {
-        id: imageId,
-      },
-      data: {
-        order: newOrder,
-      },
-    })
+    changeOrderToImageProfilePic(imageId, newOrder)
 
     reply.status(StatusCodes.NO_CONTENT).send()
   } catch (err) {
     console.log(err)
+
+    reply.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err)
   }
 }
