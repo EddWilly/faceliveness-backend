@@ -9,6 +9,13 @@ export async function createRekognitionClientSessionController(
 ) {
   try {
     const { sessionId } = req.query as { sessionId: string }
+
+    if (!sessionId) {
+      return reply.status(400).json({
+        error: 'Session Id is required has missing in params',
+      })
+    }
+
     const rekognition = await getRekognitionClient()
     const response = await rekognition
       .getFaceLivenessSessionResults({
