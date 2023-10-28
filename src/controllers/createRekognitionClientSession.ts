@@ -13,7 +13,7 @@ export async function createRekognitionClientSessionController(
     const { SessionId } = await rekognition.createFaceLivenessSession({})
 
     reply.status(200).json({
-      SessionId,
+      sessionId: SessionId,
     })
   } catch (err) {
     console.log(err)
