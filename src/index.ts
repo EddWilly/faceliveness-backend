@@ -10,7 +10,7 @@ import express from 'express'
 import statusMonitor from 'express-status-monitor'
 import { router } from './routes/router'
 
-const port = process.env.PORT
+const port = process.env.PORT || 3000
 const app = express()
 
 // fastify.get('/heath', (req, reply) => {
@@ -24,7 +24,7 @@ const app = express()
 
 // const app = express();
 // const port = process.env.PORT || 8000;
-app.use(cors())
+app.use(cors({ origin: '*' }))
 app.use(express.json())
 app.use(statusMonitor())
 
